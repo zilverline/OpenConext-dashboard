@@ -19,12 +19,13 @@
   <parent>
     <artifactId>coin-selfservice-parent</artifactId>
     <groupId>org.surfnet.coin</groupId>
-    <version>4.0.1.1</version>
+    <version>4.0.2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.surfnet.coin</groupId>
   <artifactId>dashboard-dist</artifactId>
+  <version>4.0.1</version>
   <name>OpenConext : dashboard distribution package</name>
   <packaging>pom</packaging>
 
@@ -75,9 +76,4 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
-
-
-  <scm>
-    <tag>coin-selfservice-parent-4.0.1.1</tag>
-  </scm>
 </project>
