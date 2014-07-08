@@ -17,22 +17,361 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <modules>
-    <module>coin-selfservice-war</module>
-  </modules>
-
   <parent>
     <groupId>org.surfnet.coin</groupId>
     <artifactId>coin-master</artifactId>
     <version>3.11.1</version>
   </parent>
 
-  <artifactId>coin-selfservice-parent</artifactId>
+  <artifactId>coin-selfservice-app</artifactId>
   <version>4.0.2-SNAPSHOT</version>
-  <name>OpenConext: selfservice parent</name>
+  <name>OpenConext: selfservice app</name>
   <inceptionYear>2012</inceptionYear>
 
-  <packaging>pom</packaging>
+  <properties>
+    <app.timestamp>${maven.build.timestamp}</app.timestamp>
+    <coin-shared.version>3.11.0</coin-shared.version>
+    <coin-api.version>4.0.0</coin-api.version>
+    <coin-test.version>3.11.0</coin-test.version>
+    <coin-master.test-dependencies.version>3.11.0</coin-master.test-dependencies.version>
+    <spring-security-opensaml.version>4.0.0</spring-security-opensaml.version>
+    <flyway.version>1.5</flyway.version>
+    <jackson.version>1.9.5</jackson.version>
+    <xstream.version>1.4.2</xstream.version>
+    <mujina-idp.version>4.0.0</mujina-idp.version>
+    <dumbster.version>1.6</dumbster.version>
+    <freemarker.version>[2.3.19,2.4)</freemarker.version>
+    <api-secure.version>1.3.5</api-secure.version>
+    <cruncher-client.version>3.7.0</cruncher-client.version>
+    <csa-client.version>4.0.3-SNAPSHOT</csa-client.version>
+    <jetty.version>9.1.5.v20140505</jetty.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>commons-cli</groupId>
+      <artifactId>commons-cli</artifactId>
+      <version>1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-webapp</artifactId>
+      <version>${jetty.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-jsp</artifactId>
+      <version>${jetty.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>nl.surfnet.apis</groupId>
+      <artifactId>apis-resource-server-library</artifactId>
+      <version>${api-secure.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.imgscalr</groupId>
+      <artifactId>imgscalr-lib</artifactId>
+      <version>4.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.surfnet.coin</groupId>
+      <artifactId>coin-shared</artifactId>
+      <version>${coin-shared.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>xml-apis</groupId>
+          <artifactId>xml-apis</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-config</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-taglibs</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.surfnet.coin</groupId>
+      <artifactId>spring-security-opensaml</artifactId>
+      <version>${spring-security-opensaml.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>xerces</groupId>
+          <artifactId>xercesImpl</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jstl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet.jsp</groupId>
+      <artifactId>jsp-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.googlecode.flyway</groupId>
+      <artifactId>flyway-core</artifactId>
+      <version>${flyway.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-mapper-asl</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.thoughtworks.xstream</groupId>
+      <artifactId>xstream</artifactId>
+      <version>${xstream.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.surfnet.coin</groupId>
+      <artifactId>coin-api-client</artifactId>
+      <version>${coin-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+      <version>2.3</version>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.opencsv</groupId>
+      <artifactId>opencsv</artifactId>
+      <version>2.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.swift.common</groupId>
+      <artifactId>jira-soap</artifactId>
+      <version>5.0.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>17.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>1.3.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.2.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <version>4.2.0.Final</version>
+    </dependency>
+    <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib-nodep</artifactId>
+      <version>2.2.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.2.1</version>
+      <classifier>tests</classifier>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>commons-fileupload</groupId>
+      <artifactId>commons-fileupload</artifactId>
+      <version>1.2.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.freemarker</groupId>
+      <artifactId>freemarker</artifactId>
+      <version>${freemarker.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>nl.iprofs.modules.context-logging</groupId>
+      <artifactId>context-logging</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.surfnet.coin</groupId>
+      <artifactId>csa-client</artifactId>
+      <version>${csa-client.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.surfnet</groupId>
+      <artifactId>cruncher-client</artifactId>
+      <version>${cruncher-client.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.3.3</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.jetty.aggregate</groupId>
+      <artifactId>jetty-all</artifactId>
+      <version>${jetty.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+    <pluginManagement>
+      <plugins>
+        <!--
+        <plugin>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-maven-plugin</artifactId>
+          <version>${jetty.version}</version>
+          <configuration>
+            <contextHandlers>
+              <contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
+                <contextPath>/mujina-idp</contextPath>
+                <war>
+                  ${settings.localRepository}/org/surfnet/coin/mujina-idp/${mujina-idp.version}/mujina-idp-${mujina-idp.version}.war
+                </war>
+                <extraClasspath>${basedir}/src/test/resources/</extraClasspath>
+              </contextHandler>
+            </contextHandlers>
+            <webAppConfig>
+              <contextPath>/selfservice</contextPath>
+              <extraClasspath>${basedir}/src/test/resources/</extraClasspath>
+              <defaultsDescriptor>${basedir}/src/test/resources/jettywebdefault.xml</defaultsDescriptor>
+              <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
+                <resourcesAsCSV>${basedir}/src/main/webapp,${project.build.directory}/${project.build.finalName}
+                </resourcesAsCSV>
+              </baseResource>
+            </webAppConfig>
+            <contextXml>${basedir}/src/test/resources/jetty-context.xml</contextXml>
+            <httpConnector>
+              <port>${jetty.port}</port>
+              <host>0.0.0.0</host>
+            </httpConnector>
+            <stopKey>stopselfservice</stopKey>
+            <stopPort>9280</stopPort>
+            <reload>manual</reload>
+            <useTestClasspath>true</useTestClasspath>
+          </configuration>
+        </plugin>
+        -->
+      </plugins>
+
+    </pluginManagement>
+    <plugins>
+      <!--
+      <plugin>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <dependencies>
+          <dependency>
+            <groupId>org.surfnet.coin</groupId>
+            <artifactId>coin-master-test-dependencies</artifactId>
+            <version>${coin-master.test-dependencies.version}</version>
+            <type>pom</type>
+          </dependency>
+          <dependency>
+            <groupId>org.surfnet.coin</groupId>
+            <artifactId>mujina-idp</artifactId>
+            <type>war</type>
+            <version>${mujina-idp.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+    -->
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2.1</version>
+        <executions>
+          <execution>
+            <id>make-dashboard</id>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <finalName>dashboard-dist-${project.version}</finalName>
+              <descriptors>
+                <descriptor>src/main/assembly/dashboard.xml</descriptor>
+              </descriptors>
+              <attach>true</attach>
+            </configuration>
+          </execution>
+          <execution>
+            <id>make-showroom</id>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <finalName>showroom-dist-${project.version}</finalName>
+              <descriptors>
+                <descriptor>src/main/assembly/showroom.xml</descriptor>
+              </descriptors>
+              <attach>true</attach>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+  </build>
 
   <scm>
     <connection>scm:git:git@github.com:OpenConext/OpenConext-selfservice.git</connection>
@@ -89,4 +428,79 @@
       <url>https://build.surfconext.nl/repository/public/third-party</url>
     </repository>
   </repositories>
+  <profiles>
+    <profile>
+      <id>css-javascript-minifier</id>
+      <activation>
+        <property>
+          <name>!skipCssJs</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.samaxes.maven</groupId>
+            <artifactId>minify-maven-plugin</artifactId>
+            <version>1.7.2</version>
+            <executions>
+              <execution>
+                <id>default-minify</id>
+                <phase>prepare-package</phase>
+                <configuration>
+                  <cssSourceIncludes>
+                    <cssSourceInclude>*.css</cssSourceInclude>
+                  </cssSourceIncludes>
+                  <cssFinalFile>style.css</cssFinalFile>
+
+                  <jsSourceDir>js</jsSourceDir>
+                  <jsSourceFiles>
+                    <!-- All javascript files are setup explicitly here, to conserve
+                      their order in the minified version. -->
+                    <jsSourceFile>jquery/jquery-1.8.3.min.js</jsSourceFile>
+                    <jsSourceFile>bootstrap/bootstrap-2.0.3.min.js</jsSourceFile>
+                    <jsSourceFile>bootstrap/bootstrap-tooltip.js</jsSourceFile>
+                    <jsSourceFile>bootstrap/bootstrap-popover.js</jsSourceFile>
+                    <jsSourceFile>bootstrap/bootstrap-transition.js</jsSourceFile>
+                    <jsSourceFile>bootstrap/bootbox.min.js</jsSourceFile>
+
+                    <jsSourceFile>jquery/jquery.datatables.1.9.4.min.js</jsSourceFile>
+                    <jsSourceFile>jquery/jquery.datatables.columnfilter.1.4.7.js</jsSourceFile>
+                    <jsSourceFile>jquery/jquery.ui.widget.js</jsSourceFile>
+                    <jsSourceFile>jquery/jquery.fileupload.js</jsSourceFile>
+                    <jsSourceFile>jquery/jquery.iframe-transport.js</jsSourceFile>
+                    <jsSourceFile>jquery/select2.js</jsSourceFile>
+                    <jsSourceFile>jquery/jquery.transit.js</jsSourceFile>
+                    <jsSourceFile>jquery/jquery.tickback.min.js</jsSourceFile>
+
+                    <jsSourceFile>main.js</jsSourceFile>
+
+                    <jsSourceFile>modules/app-grid.js</jsSourceFile>
+                    <jsSourceFile>modules/gallery.js</jsSourceFile>
+                    <jsSourceFile>modules/global.js</jsSourceFile>
+                    <jsSourceFile>modules/message.js</jsSourceFile>
+                    <jsSourceFile>modules/graphs.js</jsSourceFile>
+                    <jsSourceFile>modules/respond.js</jsSourceFile>
+                    <jsSourceFile>modules/table.js</jsSourceFile>
+                    <jsSourceFile>modules/notifications.js</jsSourceFile>
+                    <jsSourceFile>modules/app-detail.js</jsSourceFile>
+                    <jsSourceFile>modules/identity-switch.js</jsSourceFile>
+                    <jsSourceFile>modules/inline-help.js</jsSourceFile>
+
+                    <jsSourceFile>tools/html5shiv.js</jsSourceFile>
+                    <jsSourceFile>tools/ios-orientationchange-fix.js</jsSourceFile>
+                    <jsSourceFile>tools/sizewatcher.js</jsSourceFile>
+
+                  </jsSourceFiles>
+                  <jsFinalFile>script.js</jsFinalFile>
+                </configuration>
+                <goals>
+                  <goal>minify</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
