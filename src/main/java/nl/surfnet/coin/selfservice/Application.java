@@ -19,8 +19,8 @@ public class Application {
     HelpFormatter formatter = new HelpFormatter();
 
     Options options = new Options();
-    options.addOption("h", "help", false, "Print help message");
-    options.addOption(PORT_ARG, "port", true, "Tcp/ip port you want the server to bind to, e.g. 8080");
+    options.addOption("h", false, "Print help message");
+    options.addOption(PORT_ARG, true, "Tcp/ip port you want the server to bind to, e.g. 8080");
 
     try {
       CommandLine cmd = parser.parse(options, args);
@@ -29,7 +29,7 @@ public class Application {
         return;
       } else if (cmd.hasOption(PORT_ARG)) {
         System.out.println("Starting application on port " + cmd.getOptionValue("p"));
-        Integer port = Integer.parseInt(cmd.getOptionValue(cmd.getOptionValue(PORT_ARG)));
+        Integer port = Integer.parseInt(cmd.getOptionValue(PORT_ARG));
         Server server = new Server(port);
 
         WebAppContext webAppContext = new WebAppContext();
