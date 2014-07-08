@@ -29,7 +29,7 @@
 
   <artifactId>coin-selfservice-parent</artifactId>
   <version>4.0.2-SNAPSHOT</version>
-  <name>OpenConect : selfservice parent pom</name>
+  <name>OpenConext: selfservice parent</name>
   <inceptionYear>2012</inceptionYear>
 
   <packaging>pom</packaging>
