@@ -123,12 +123,9 @@ public class Application {
     try {
       JoranConfigurator configurator = new JoranConfigurator();
       configurator.setContext(context);
-      // Call context.reset() to clear any previous configuration, e.g. default
-      // configuration. For multi-step configuration, omit calling context.reset().
-      context.reset();
+      context.reset(); // override any config that may have been initialized previously by Logbacks auto-configuration mechanism
       configurator.doConfigure(inputStream);
     } catch (JoranException ex) {
-      // StatusPrinter will handle this
       StatusPrinter.printInCaseOfErrorsOrWarnings(context);
       throw new RuntimeException("Unable to configure logging, exiting", ex);
     }
