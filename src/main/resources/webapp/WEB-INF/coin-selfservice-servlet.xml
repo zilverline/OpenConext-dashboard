@@ -87,7 +87,6 @@
   </mvc:interceptors>
 
   <bean id="featureInterceptor" class="nl.surfnet.coin.selfservice.interceptor.FeatureInterceptor">
-    <property name="developmentMode" value="${feature.development.mode}"/>
     <property name="isDashBoard" value="${is.dashboard}"/>
   </bean>
 

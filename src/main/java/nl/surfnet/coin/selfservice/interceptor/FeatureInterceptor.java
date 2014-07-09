@@ -16,11 +16,15 @@
 
 package nl.surfnet.coin.selfservice.interceptor;
 
+import java.util.Arrays;
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import nl.surfnet.coin.selfservice.util.SpringSecurity;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -29,9 +33,15 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  * Interceptor to enable/disable (new) features
  */
 public class FeatureInterceptor extends HandlerInterceptorAdapter {
+
+  private static final String DEVELOPMENT_PROFILE_NAME = "dev";
+
   private boolean developmentMode;
 
   private boolean isDashBoard;
+
+  @Autowired
+  private Environment environment;
 
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -52,8 +62,9 @@ public class FeatureInterceptor extends HandlerInterceptorAdapter {
     }
   }
 
-  public void setDevelopmentMode(boolean devMode) {
-    this.developmentMode = devMode;
+  @PostConstruct
+  public void init(){
+    developmentMode = Arrays.asList(environment.getActiveProfiles()).contains(DEVELOPMENT_PROFILE_NAME);
   }
 
   public void setIsDashBoard(boolean dashBoard) {

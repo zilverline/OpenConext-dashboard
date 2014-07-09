@@ -24,9 +24,6 @@ public class CruncherMock implements Cruncher {
   private ObjectMapper objectMapper = new ObjectMapper().enable(DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
           .setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
 
-  public CruncherMock(String cruncherBaseLocation) {
-  }
-
   @Override
   public String getLogins(Date startDate, Date endDate) {
     return getLoginStatsByIdpSp();
@@ -45,13 +42,10 @@ public class CruncherMock implements Cruncher {
       }
       return mapper.writeValueAsString(result);
     } catch (JsonParseException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     } catch (JsonMappingException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     return getLoginStatsByIdpSp();

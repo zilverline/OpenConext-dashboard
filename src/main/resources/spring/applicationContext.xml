@@ -11,13 +11,13 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
   <import resource="coin-selfservice-properties-context.xml" />
   <import resource="classpath:coin-shared-context.xml" />
   <import resource="coin-selfservice-security.xml" />
+
+  <util:properties id="applicationProperties" location="classpath:application.properties"/>
 
   <context:component-scan base-package="nl.surfnet.coin.selfservice,nl.surfnet.coin.csa,nl.surfnet.sab" />
 
@@ -52,32 +52,6 @@
      <property name="templateLoaderPath" value="classpath:/ftl/"/>
   </bean>
 
-  <bean id="csa" class="${csaClass}">
-    <constructor-arg name="csaBaseLocation" value="${csa.base.url}" />
-
-    <property name="oauthClient">
-      <bean class="nl.surfnet.coin.oauth.ClientCredentialsClient">
-        <property name="clientKey" value="${csa.client.key}" />
-        <property name="clientSecret" value="${csa.client.secret}" />
-        <property name="oauthAuthorizationUrl" value="${csa.oauth2.authorization.url}" />
-      </bean>
-    </property>
-  </bean>
-
-  <bean id="cruncher" class="${cruncherClass}">
-    <constructor-arg name="cruncherBaseLocation" value="${cruncher.base.url}" />
-    <property name="oauthClient">
-      <bean class="nl.surfnet.coin.oauth.ClientCredentialsClient">
-        <property name="clientKey" value="${cruncher.client.key}" />
-        <property name="clientSecret" value="${cruncher.client.secret}" />
-        <property name="oauthAuthorizationUrl" value="${cruncher.oauth2.authorization.url}" />
-      </bean>
-    </property>
-  </bean>
-
-  <!-- this will be either the real SabClient or a Mock -->
-  <bean id="sabClient" class="${sabClientClass}" />
-
   <bean id="samlCredentials" class="org.apache.http.auth.UsernamePasswordCredentials">
     <constructor-arg index="0" value="${sab.username}"/>
     <constructor-arg index="1" value="${sab.password}"/>
@@ -88,5 +62,36 @@
     <constructor-arg index="1" value="${sab-rest.password}"/>
   </bean>
 
-  <util:properties id="applicationProperties" location="classpath:application.properties"/>
+  <beans profile="dev">
+    <bean id="csa" class="nl.surfnet.coin.selfservice.service.impl.CsaMock" />
+    <bean id="sabClient" class="nl.surfnet.sab.SabClientMock"/>
+    <bean id="cruncher" class="nl.surfnet.coin.selfservice.service.impl.CruncherMock" />
+  </beans>
+
+  <beans profile="prod">
+    <bean id="csa" class="nl.surfnet.coin.csa.CsaClient">
+      <constructor-arg name="csaBaseLocation" value="${csa.base.url}"/>
+      <property name="oauthClient">
+        <bean class="nl.surfnet.coin.oauth.ClientCredentialsClient">
+          <property name="clientKey" value="${csa.client.key}"/>
+          <property name="clientSecret" value="${csa.client.secret}"/>
+          <property name="oauthAuthorizationUrl" value="${csa.oauth2.authorization.url}"/>
+        </bean>
+      </property>
+    </bean>
+
+    <bean id="cruncher" class="org.surfnet.cruncher.CruncherClient">
+      <constructor-arg name="cruncherBaseLocation" value="${cruncher.base.url}" />
+      <property name="oauthClient">
+        <bean class="nl.surfnet.coin.oauth.ClientCredentialsClient">
+          <property name="clientKey" value="${cruncher.client.key}" />
+          <property name="clientSecret" value="${cruncher.client.secret}" />
+          <property name="oauthAuthorizationUrl" value="${cruncher.oauth2.authorization.url}" />
+        </bean>
+      </property>
+    </bean>
+
+    <bean id="sabClient" class="nl.surfnet.sab.SabClient" />
+  </beans>
+
 </beans>
