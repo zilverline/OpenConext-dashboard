@@ -140,7 +140,7 @@ public class Application {
     webAppContext.setContextPath("/");
     webAppContext.setResourceBase(Application.class.getClassLoader().getResource("webapp/").toExternalForm());
     server.setHandler(webAppContext);
-
+    LOG.debug("Starting server");
     server.start();
   }
 }
