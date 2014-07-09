@@ -1,6 +1,7 @@
 package nl.surfnet.coin.selfservice;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -38,21 +39,21 @@ public class Application {
   public Application(Optional<String> customPropertiesLocation) {
     Properties properties = new Properties();
     if (customPropertiesLocation.isPresent()) {
-      try(InputStream input = new FileInputStream(customPropertiesLocation.get())) {
+      try (InputStream input = new FileInputStream(customPropertiesLocation.get())) {
         properties.load(input);
       } catch (IOException ex) {
         System.err.println("Unable to load config file at path: " + customPropertiesLocation.get() + ", does it exist?");
         throw new RuntimeException(ex.getMessage());
       }
     } else {
-      try(InputStream input = Application.class.getClassLoader().getResourceAsStream(DEFAULT_PROPERTIES_LOCATION)) {
+      try (InputStream input = Application.class.getClassLoader().getResourceAsStream(DEFAULT_PROPERTIES_LOCATION)) {
         properties.load(input);
       } catch (IOException ex) {
         throw new RuntimeException(ex.getMessage());
       }
     }
     String logConfigFile = properties.getProperty(APP_LOGCONFIGFILE_PROPERTYNAME);
-    initLogging(logConfigFile);
+    initLogging(loadLogConfigByName(logConfigFile));
     this.port = Integer.parseInt(properties.getProperty(APP_PORT_PROPERTYNAME));
     LOG.info("Application configured to be started on port {}", this.port);
   }
@@ -73,7 +74,7 @@ public class Application {
     server.join();
   }
 
-  public static void main(String[] args)  {
+  public static void main(String[] args) {
 
     CommandLineParser parser = new GnuParser();
     HelpFormatter formatter = new HelpFormatter();
@@ -88,7 +89,7 @@ public class Application {
         formatter.printHelp(APP_NAME, options);
         return;
       } else {
-        Optional<String> configLocation = cmd.hasOption(configOption.getOpt())? Optional.of(cmd.getOptionValue(configOption.getOpt())) : Optional.<String>absent();
+        Optional<String> configLocation = cmd.hasOption(configOption.getOpt()) ? Optional.of(cmd.getOptionValue(configOption.getOpt())) : Optional.<String>absent();
         Application application = new Application(configLocation);
         application.start().join();
       }
@@ -99,7 +100,23 @@ public class Application {
     }
   }
 
-  private void initLogging(final String logConfigFilePath) {
+  public InputStream loadLogConfigByName(final String location) {
+    java.io.File f = new java.io.File(location);
+    InputStream inputStream;
+    if (f.isFile()) {
+      try {
+        return new FileInputStream(f);
+      } catch (FileNotFoundException e) {
+      }
+    } // there was no such file, fallback to default development-config from classpath
+    inputStream = Application.class.getClassLoader().getResourceAsStream(location);
+    if (inputStream == null) {
+      throw new RuntimeException("Unable to read logging config, either at file location or on classpath with reference " + location);
+    }
+    return inputStream;
+  }
+
+  private void initLogging(final InputStream inputStream) {
     LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
 
     try {
@@ -108,15 +125,16 @@ public class Application {
       // Call context.reset() to clear any previous configuration, e.g. default
       // configuration. For multi-step configuration, omit calling context.reset().
       context.reset();
-      configurator.doConfigure(logConfigFilePath);
+      configurator.doConfigure(inputStream);
     } catch (JoranException ex) {
       // StatusPrinter will handle this
       StatusPrinter.printInCaseOfErrorsOrWarnings(context);
       throw new RuntimeException("Unable to configure logging, exiting", ex);
     }
-    LOG.info("Logging configured, using: {}", logConfigFilePath);
+    LOG.debug("Logging configured");
   }
-  private void startJetty() throws Exception{
+
+  private void startJetty() throws Exception {
     this.server = new Server(port);
     WebAppContext webAppContext = new WebAppContext();
     webAppContext.setContextPath("/");
