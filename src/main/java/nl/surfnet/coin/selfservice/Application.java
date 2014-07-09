@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Properties;
 
 import org.apache.commons.cli.CommandLine;
@@ -32,6 +33,7 @@ public class Application {
   private static final String DEFAULT_PROPERTIES_LOCATION = "application.properties";
   public static final String APP_LOGCONFIGFILE_PROPERTYNAME = "app.logconfigfile";
   public static final String APP_PORT_PROPERTYNAME = "app.port";
+  public static final String WEBAPP_LOCATION = "webapp/";
 
   private Server server;
   private Integer port;
@@ -87,7 +89,6 @@ public class Application {
       CommandLine cmd = parser.parse(options, args);
       if (cmd.hasOption("h")) {
         formatter.printHelp(APP_NAME, options);
-        return;
       } else {
         Optional<String> configLocation = cmd.hasOption(configOption.getOpt()) ? Optional.of(cmd.getOptionValue(configOption.getOpt())) : Optional.<String>absent();
         Application application = new Application(configLocation);
@@ -106,7 +107,7 @@ public class Application {
     if (f.isFile()) {
       try {
         return new FileInputStream(f);
-      } catch (FileNotFoundException e) {
+      } catch (FileNotFoundException ignored) {
       }
     } // there was no such file, fallback to default development-config from classpath
     inputStream = Application.class.getClassLoader().getResourceAsStream(location);
@@ -138,7 +139,11 @@ public class Application {
     this.server = new Server(port);
     WebAppContext webAppContext = new WebAppContext();
     webAppContext.setContextPath("/");
-    webAppContext.setResourceBase(Application.class.getClassLoader().getResource("webapp/").toExternalForm());
+    final URL resource = Application.class.getClassLoader().getResource(WEBAPP_LOCATION);
+    if (resource == null) {
+      throw new RuntimeException("Webapp not found at expected location: " + WEBAPP_LOCATION);
+    }
+    webAppContext.setResourceBase(resource.toExternalForm());
     server.setHandler(webAppContext);
     LOG.debug("Starting server");
     server.start();
