@@ -19,6 +19,7 @@ SURFconext: [http://www.surfconext.nl](http://www.surfconext.nl)
 - Java 6
 - Maven 3
 - MySQL 5.5
+- mujina idp
 
 ### Building and running
 
@@ -28,7 +29,13 @@ To build:
 
     mvn clean install
 
-To run locally:
+First, run [mujina-idp](https://github.com/OpenConext/Mujina). You will have to git clone it.
+
+    git clone git@github.com:OpenConext/Mujina.git
+    cd Mujina/mujina-idp
+    mvn jetty:run -DhttpPort=8280
+
+Then run selfservice :
 
     cd coin-selfservice-war
     mvn exec:java
